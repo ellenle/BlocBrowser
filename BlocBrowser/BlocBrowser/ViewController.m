@@ -35,7 +35,7 @@
     self.textField.returnKeyType = UIReturnKeyDone;
     self.textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     self.textField.autocorrectionType = UITextAutocorrectionTypeNo;
-    self.textField.placeholder = NSLocalizedString(@"  Website URL", @"Placeholder text for web browser URL field");
+    self.textField.placeholder = NSLocalizedString(@"   Website URL or Search Query", @"Placeholder text for web browser URL field");
     self.textField.backgroundColor = [UIColor colorWithWhite:220/255.0f alpha:1];
     self.textField.delegate = self;
     
@@ -112,9 +112,22 @@
     
     NSURL *URL = [NSURL URLWithString:URLString];
     
+    // 1. it has a space, it must be a search
+    // 2. it doesn't have a space, it must be a url
+    // a. it doesn't have a URL.scheme , so add http://
+    
+    NSRange urlSpaces = [URLString rangeOfString:@" "];
+    
+    if (urlSpaces.location !=NSNotFound){
+        //user typed in something with a space in it, we'll use it as a search query
+        URLString = [URLString stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+        URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://google.com/search?q=%@", URLString]];
+    }
+    
     if (!URL.scheme) {
         //user didn't type http:// or https://
-        URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", URLString]];
+        URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", URL]];
+        NSLog(@"url: %@", URL);
     }
     
     if (URL) {
