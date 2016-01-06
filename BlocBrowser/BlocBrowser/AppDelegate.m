@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "ViewController.h"
 
+
 @interface AppDelegate ()
 
 @end
@@ -23,6 +24,18 @@
     self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[[ViewController alloc] init]];
     
     [self.window makeKeyAndVisible];
+    
+    //welcome message when opening the app
+    UIAlertController* welcome = [UIAlertController alertControllerWithTitle:@"Welcome!"
+                                    message:@"This is Bloc Browser."
+                                    preferredStyle:UIAlertControllerStyleAlert];
+                                  
+    UIAlertAction* dismiss = [UIAlertAction actionWithTitle:@"Let's go!"
+                                    style:UIAlertActionStyleDefault
+                                                    handler:^(UIAlertAction * action){}];
+    
+    [welcome addAction:dismiss];
+    [self.window.rootViewController presentViewController:welcome animated:YES completion:nil];
     return YES;
 }
 
