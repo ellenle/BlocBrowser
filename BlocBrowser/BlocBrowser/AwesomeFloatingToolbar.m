@@ -16,6 +16,7 @@
 @property (nonatomic, weak) UILabel *currentLabel;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+@property (nonatomic, strong) UIPinchGestureRecognizer *pinchGesture;
 
 @end
 
@@ -63,11 +64,12 @@
         //#1 - 1 tells the gesture recognizers which methods to call when a tap is detected
         self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFired:)];
         self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panFired:)];
+        self.pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchFired:)];
         
         //#2 -  tells the view (self) to route touch events through this gesture recognizer
         [self addGestureRecognizer:self.tapGesture];
         [self addGestureRecognizer:self.panGesture];
-        
+        [self addGestureRecognizer:self.pinchGesture];
     }
     return self;
 }
@@ -97,6 +99,14 @@
         
         [recognizer setTranslation:CGPointZero inView:self];
     }
+}
+
+-(void) pinchFired:(UIPinchGestureRecognizer *)recognizer {
+   
+    if ([self.delegate respondsToSelector:@selector(floatingToolbar:didPinchToolbar:)]) {
+        [self.delegate floatingToolbar:self didPinchToolbar:recognizer.scale];
+    }
+    
 }
 
 - (void)layoutSubviews {
