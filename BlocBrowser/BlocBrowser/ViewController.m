@@ -75,7 +75,10 @@
     self.textField.frame = CGRectMake(0, 0, width, itemHeight);
     self.webView.frame = CGRectMake(0, CGRectGetMaxY(self.textField.frame), width, browserHeight);
     
-    self.awesomeToolbar.frame = CGRectMake(0,self.view.frame.size.height-60,self.view.frame.size.width,60);
+    static dispatch_once_t predicate;
+    dispatch_once(&predicate, ^{
+        self.awesomeToolbar.frame = CGRectMake(0,self.view.frame.size.height-60,self.view.frame.size.width / 2,60);
+    });
     
 }
 
@@ -206,5 +209,19 @@
         toolbar.frame = potentialNewFrame;
     }
 }
+
+-(void) floatingToolbar:(AwesomeFloatingToolbar *)toolbar didPinchToolbar:(CGFloat)scale {
+    CGAffineTransform newTransform = CGAffineTransformMakeScale(scale, scale);
+    toolbar.transform = newTransform;
+/*
+    NSLog(@"Before:%@",[NSValue valueWithCGRect:toolbar.frame]);
+    toolbar.frame = CGRectMake(toolbar.frame.origin.x,
+                               toolbar.frame.origin.y,
+                               toolbar.frame.size.width * scale,
+                               toolbar.frame.size.height * scale);
+    NSLog(@"After: %@",[NSValue valueWithCGRect:toolbar.frame]);
+*/
+ }
+
 
 @end

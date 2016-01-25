@@ -16,6 +16,9 @@
 @property (nonatomic, weak) UILabel *currentLabel;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+@property (nonatomic, strong) UIPinchGestureRecognizer *pinchGesture;
+@property (nonatomic, strong) UILongPressGestureRecognizer *longPressGesture;
+@property (nonatomic) int labelIndex;
 
 @end
 
@@ -63,11 +66,14 @@
         //#1 - 1 tells the gesture recognizers which methods to call when a tap is detected
         self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapFired:)];
         self.panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panFired:)];
+        self.pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchFired:)];
+        self.longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressFired:)];
         
         //#2 -  tells the view (self) to route touch events through this gesture recognizer
         [self addGestureRecognizer:self.tapGesture];
         [self addGestureRecognizer:self.panGesture];
-        
+        [self addGestureRecognizer:self.pinchGesture];
+        [self addGestureRecognizer:self.longPressGesture];
     }
     return self;
 }
@@ -96,6 +102,30 @@
         }
         
         [recognizer setTranslation:CGPointZero inView:self];
+    }
+}
+
+-(void) pinchFired:(UIPinchGestureRecognizer *)recognizer {
+   
+    if ([self.delegate respondsToSelector:@selector(floatingToolbar:didPinchToolbar:)]) {
+        [self.delegate floatingToolbar:self didPinchToolbar:recognizer.scale];
+    }
+}
+
+- (void)incrementLabelIndex {
+    self.labelIndex++;
+    if (self.labelIndex > 3) {
+        self.labelIndex = 0;
+    }
+}
+
+-(void) longPressFired:(UILongPressGestureRecognizer *) recognizer {
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        for (UILabel *currentLabel in self.labels) {
+            [self incrementLabelIndex];
+            currentLabel.backgroundColor = self.colors[self.labelIndex];
+        }
+        [self incrementLabelIndex];
     }
 }
 
